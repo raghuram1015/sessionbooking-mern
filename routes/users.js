@@ -25,12 +25,14 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
         res.json(user);
-    } catch (err)
+    } catch (err) { // <-- ADDED the opening curly brace here
+        console.error(err.message);
         if (err.kind === 'ObjectId') {
              return res.status(404).json({ msg: 'User not found' });
         }
         res.status(500).send('Server Error');
-    }
+    } // <-- And ADDED the closing curly brace here
 });
 
 module.exports = router;
+
