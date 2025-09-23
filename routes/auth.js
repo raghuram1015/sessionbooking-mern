@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 
 // This is a temporary, in-memory "database" for demonstration purposes.
 // In a real application, you would use a proper database like MongoDB.
