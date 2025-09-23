@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User'); // Import User model
+const bcrypt = require('bcryptjs'); // Make sure it's 'bcryptjs'
 
 // @route   GET api/users
 // @desc    Get all users (for admin purposes, should be protected)
