@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// Load environment variables from .env file
+// Load environment variables from .env file here
 dotenv.config();
 
 // Import route handlers
