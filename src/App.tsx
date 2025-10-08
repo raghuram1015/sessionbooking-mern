@@ -7,6 +7,7 @@ import BrowseSessions from './pages/BrowseSessions';
 import HostSession from './pages/HostSession';
 import MyBookings from './pages/MyBookings';
 import MySessions from './pages/MySessions';
+import AdminManagement from './pages/AdminManagement';
 
 function AppContent() {
   const [showSignUp, setShowSignUp] = useState(false);
@@ -35,6 +36,7 @@ function AppContent() {
       {currentPage === 'host' && <HostSession onNavigate={setCurrentPage} />}
       {currentPage === 'bookings' && <MyBookings />}
       {currentPage === 'sessions' && <MySessions />}
+      {currentPage === 'admin' && <AdminManagement />}
     </MainLayout>
   );
 }

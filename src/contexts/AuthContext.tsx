@@ -40,7 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })();
     });
 
-    return () => subscription.unsubscribe();
+    const handleOffline = async () => {
+      await supabase.auth.signOut();
+      setUser(null);
+      setProfile(null);
+    };
+
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {

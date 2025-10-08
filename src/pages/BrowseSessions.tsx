@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, Filter, Calendar, Clock, Video } from 'lucide-react';
 import { supabase, Session } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import SessionDetailsModal from '../components/Modals/SessionDetailsModal';
 
 export default function BrowseSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -10,6 +11,7 @@ export default function BrowseSessions() {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [loading, setLoading] = useState(true);
   const [bookingCounts, setBookingCounts] = useState<Record<string, number>>({});
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const { user } = useAuth();
 
   const categories = ['All Categories', 'Workshop', 'Seminar', 'Tutorial', 'Webinar', 'Conference'];
@@ -91,6 +93,7 @@ export default function BrowseSessions() {
       if (error) throw error;
 
       alert('Session booked successfully!');
+      setSelectedSession(null);
       fetchSessions();
     } catch (error: any) {
       if (error.code === '23505') {
@@ -200,7 +203,10 @@ export default function BrowseSessions() {
                 </div>
 
                 <div className="flex gap-2">
-                  <button className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                  <button
+                    onClick={() => setSelectedSession(session)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                  >
                     View Details
                   </button>
                   <button
@@ -221,6 +227,14 @@ export default function BrowseSessions() {
         <div className="text-center py-12">
           <p className="text-gray-600">No sessions found matching your criteria.</p>
         </div>
+      )}
+
+      {selectedSession && (
+        <SessionDetailsModal
+          session={selectedSession}
+          onClose={() => setSelectedSession(null)}
+          onBook={() => handleBooking(selectedSession.id)}
+        />
       )}
     </div>
   );

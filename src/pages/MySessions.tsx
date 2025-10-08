@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Video, Calendar, Clock, Users, Eye } from 'lucide-react';
+import { Video, Calendar, Clock, Users, Eye, Edit } from 'lucide-react';
 import { supabase, Session } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import SessionDetailsModal from '../components/Modals/SessionDetailsModal';
+import EditSessionModal from '../components/Modals/EditSessionModal';
 
 export default function MySessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -9,6 +11,8 @@ export default function MySessions() {
   const [bookingCounts, setBookingCounts] = useState<Record<string, number>>({});
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   const [attendees, setAttendees] = useState<any[]>([]);
+  const [viewingSession, setViewingSession] = useState<Session | null>(null);
+  const [editingSession, setEditingSession] = useState<Session | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -139,20 +143,35 @@ export default function MySessions() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      if (showingAttendees) {
-                        setSelectedSession(null);
-                        setAttendees([]);
-                      } else {
-                        fetchAttendees(session.id);
-                      }
-                    }}
-                    className="inline-flex items-center gap-2 px-5 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showingAttendees ? 'Hide Attendees' : 'View Attendees'}
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setViewingSession(session)}
+                      className="inline-flex items-center gap-2 px-5 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                    >
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => setEditingSession(session)}
+                      className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit Session
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (showingAttendees) {
+                          setSelectedSession(null);
+                          setAttendees([]);
+                        } else {
+                          fetchAttendees(session.id);
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 px-5 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                      {showingAttendees ? 'Hide Attendees' : 'View Attendees'}
+                    </button>
+                  </div>
                 </div>
 
                 {showingAttendees && (
@@ -193,6 +212,29 @@ export default function MySessions() {
             </div>
           )}
         </div>
+
+        {viewingSession && (
+          <SessionDetailsModal
+            session={viewingSession}
+            onClose={() => setViewingSession(null)}
+            onEdit={() => {
+              setEditingSession(viewingSession);
+              setViewingSession(null);
+            }}
+            isHost={true}
+          />
+        )}
+
+        {editingSession && (
+          <EditSessionModal
+            session={editingSession}
+            onClose={() => setEditingSession(null)}
+            onSuccess={() => {
+              fetchSessions();
+              setEditingSession(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );
